@@ -1,6 +1,6 @@
 {
   "name": "winston-red",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "saves your time when using the winston logger",
   "main": "index.js",
   "scripts": {
