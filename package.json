@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/KayvanMazaheri/winston-red#readme",
   "devDependencies": {
+    "chai": "^4.1.1",
     "mocha": "^3.5.0",
     "standard": "^10.0.3"
   }
