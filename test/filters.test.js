@@ -77,4 +77,69 @@ describe('Filters', function () {
       response.should.include('499***5849')
     })
   })
+
+  describe('IR Credit Card (irCreditCard)', function () {
+    const irCreditCard = filters.irCreditCard
+
+    it('shoule be a function', function () {
+      irCreditCard.should.be.a('function')
+    })
+
+    it('should return a string', function () {
+      let result = irCreditCard('error', 'Hello World!')
+      result.should.be.a('string')
+    })
+
+    it('should not care about the logging level', function () {
+      let validCreditCard = '6037991165316294'
+
+      let errorResponse = irCreditCard('error', validCreditCard)
+      let warningResponse = irCreditCard('warn', validCreditCard)
+      let infoResponse = irCreditCard('info', validCreditCard)
+      let verboseResponse = irCreditCard('verbose', validCreditCard)
+      let debugResponse = irCreditCard('debug', validCreditCard)
+      let sillyResponse = irCreditCard('silly', validCreditCard)
+
+      warningResponse.should.equal(errorResponse)
+      infoResponse.should.equal(errorResponse)
+      verboseResponse.should.equal(errorResponse)
+      debugResponse.should.equal(errorResponse)
+      sillyResponse.should.equal(errorResponse)
+    })
+
+    it('should not care about the metadata')
+
+    it('should not change the message if it does not contain a valid credit card number', function () {
+      let ccFreeString = 'The quick brown fox jumps over the lazy dog'
+      let response = irCreditCard('error', ccFreeString)
+      response.should.equal(ccFreeString)
+    })
+
+    it('should alter the message if it contains a valid credit card number', function () {
+      let sensitiveLog = 'The quick brown fox with credit card number 6037991165316294 jumps over the lazy dog'
+      let response = irCreditCard('error', sensitiveLog)
+      response.should.not.equal(sensitiveLog)
+    })
+
+    it('should replace the 2 middle sections of the credit card number with stars. pattern: 0000********0000', function () {
+      let sensitiveLog = 'Hello World! My Credit Card Number is 6037991165316294'
+      let response = irCreditCard('error', sensitiveLog)
+      response.should.equal('Hello World! My Credit Card Number is 6037********6294')
+    })
+
+    it('should not leave credit card numbers in the result', function () {
+      let sensitiveLog = 'Hello World! My credit card number is 6037991165316294'
+      let response = irCreditCard('error', sensitiveLog)
+      response.should.not.include('6037991165316294')
+    })
+
+    it('should apply the filter for all occurrences of credit card numbers', function () {
+      let sensitiveLog = 'The quick brown fox with credit card number 6037991165316294 jumps over the lazy dog with credit card number 5892101157435518'
+      let response = irCreditCard('error', sensitiveLog)
+      response.should.not.include('6037991165316294')
+      response.should.not.include('5892101157435518')
+      response.should.include('6037********6294')
+      response.should.include('5892********5518')
+    })
+  })
 })
